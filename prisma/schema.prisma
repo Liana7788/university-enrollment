@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subject {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  groups    Group[]
+}
+
+model Group {
+  id        String   @id @default(cuid())
+  subjectId String
+  title     String
+  dayOfWeek Int      // 1..7 (Mon..Sun)
+  startTime String   // "14:00"
+  endTime   String   // "15:30"
+  capacity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+
+  @@index([subjectId])
+  @@unique([subjectId, title])
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  studentNo String   @unique
+  fullName  String
+  email     String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enrollments Enrollment[]
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  groupId   String
+  studentId String
+  createdAt DateTime @default(now())
+
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, studentId])
+  @@index([groupId])
+  @@index([studentId])
+}

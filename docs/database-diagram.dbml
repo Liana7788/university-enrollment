@@ -1,0 +1,46 @@
+Table subjects {
+  id string [pk]
+  code string [unique]
+  name string
+  createdAt datetime
+  updatedAt datetime
+}
+
+Table groups {
+  id string [pk]
+  subjectId string [not null, ref: > subjects.id]
+  title string
+  dayOfWeek int
+  startTime string
+  endTime string
+  capacity int
+  createdAt datetime
+  updatedAt datetime
+
+  indexes {
+    (subjectId)
+    (subjectId, title) [unique]
+  }
+}
+
+Table students {
+  id string [pk]
+  studentNo string [unique]
+  fullName string
+  email string [unique, null]
+  createdAt datetime
+  updatedAt datetime
+}
+
+Table enrollments {
+  id string [pk]
+  groupId string [not null, ref: > groups.id]
+  studentId string [not null, ref: > students.id]
+  createdAt datetime
+
+  indexes {
+    (groupId, studentId) [unique]
+    (groupId)
+    (studentId)
+  }
+}
