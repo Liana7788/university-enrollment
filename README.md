@@ -33,3 +33,8 @@ npx prisma generate
 
 # Development
 npm run dev
+
+## Swagger Documentation
+
+- Swagger UI: http://localhost:5000/api-docs
+- OpenAPI JSON: http://localhost:5000/api-docs-json
